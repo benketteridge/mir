@@ -4,11 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import ratpack.handling.Context;
 
 @Slf4j
-public class LoginHandler implements ExtendedHandler {
+public class LoginHandler extends ExtendedHandler {
+
+    @Override
+    public boolean requiresAuthorization() {
+        return false;
+    }
 
     @Override
     public boolean supports(Context ctx) {
-        return ctx.getRequest().getMethod().isPost() && ctx.getRequest().getPath().equals("login");
+        return super.supports(ctx) && ctx.getRequest().getMethod().isPost() && ctx.getRequest().getPath().equals("login");
     }
 
     @Override

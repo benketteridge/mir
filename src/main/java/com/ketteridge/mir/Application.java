@@ -1,5 +1,6 @@
 package com.ketteridge.mir;
 
+import com.ketteridge.mir.handlers.AuthorizationHandler;
 import lombok.extern.slf4j.Slf4j;
 import ratpack.handling.RequestLogger;
 import ratpack.server.RatpackServer;
@@ -10,6 +11,7 @@ public class Application {
     public static void main(String[] args) throws Exception {
         RatpackServer.start(server -> server.handlers(chain -> chain
                 .all(RequestLogger.ncsa())
+                .all(new AuthorizationHandler())
                 .all(new Router())));
     }
 }

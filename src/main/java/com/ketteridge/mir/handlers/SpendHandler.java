@@ -4,10 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import ratpack.handling.Context;
 
 @Slf4j
-public class SpendHandler implements ExtendedHandler {
+public class SpendHandler extends ExtendedHandler {
+
     @Override
     public boolean supports(Context ctx) {
-        return ctx.getRequest().getMethod().isPost() && ctx.getRequest().getPath().equals("spend");
+        return super.supports(ctx) && ctx.getRequest().getMethod().isPost() && ctx.getRequest().getPath().equals("spend");
     }
 
     @Override
