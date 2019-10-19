@@ -1,7 +1,6 @@
 package com.ketteridge.mir.handlers;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.ketteridge.mir.domain.Authorization;
 import lombok.extern.slf4j.Slf4j;
 import ratpack.handling.Context;
 import ratpack.handling.Handler;
@@ -23,9 +22,4 @@ public class AuthorizationHandler implements Handler {
         else ctx.next();
     }
 
-    @Getter
-    @AllArgsConstructor
-    static class Authorization {
-        private String auth;
-    }
 }

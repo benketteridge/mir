@@ -23,7 +23,7 @@ public class LoginHandler extends ExtendedHandler {
 
     @Override
     public boolean supports(Context ctx) {
-        return super.supports(ctx) && ctx.getRequest().getMethod().isPost() && ctx.getRequest().getPath().equals("login");
+        return ctx.getRequest().getMethod().isPost() && ctx.getRequest().getPath().equals("login");
     }
 
     @Override
@@ -31,9 +31,13 @@ public class LoginHandler extends ExtendedHandler {
 
         String theHash = newHash(String.format("new%shash", LocalDateTime.now().toString()));
 
-        JedisPool pool = ctx.get(JedisPool.class);
+        // very simple implementation of an account is just a list of transactions.
+        // we store that list as a JSON string against the authorization hash, and
+        // this means returning the list is trivial, and as the only way to change
+        // the balance is by using the spend API, we can create a balance record
+        // any time we spend
 
-        try (Jedis jedis = pool.getResource()) {
+        try (Jedis jedis = getPool(ctx).getResource()) {
             List<Transaction> transactions = Collections.singletonList(new Transaction(LocalDateTime.now().toString(), "initial setup", "100", "USD"));
             String transactionListAsJson = mapper.writeValueAsString(transactions);
 

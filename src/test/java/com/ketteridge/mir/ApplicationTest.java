@@ -13,16 +13,17 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 @RunWith(JUnit4.class)
 public class ApplicationTest {
 
-    private JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
+//    private JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
+    private JedisPool pool = mock(JedisPool.class);
 
     private MainClassApplicationUnderTest appUnderTest = new MainClassApplicationUnderTest(Application.class) {
         @Override
         protected void addImpositions(final ImpositionsSpec impositions) {
-            // TODO: replace with mock JedisPool
             impositions.add(UserRegistryImposition.of(Registry.single(JedisPool.class, pool)));
         }
     };
