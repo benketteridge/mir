@@ -16,9 +16,6 @@ public class DefaultHandler extends ExtendedHandler {
 
     @Override
     public void handle(Context ctx) throws Exception {
-//        if (ctx.getRequest().getPath().equals(""))
-//            ctx.render("hello world");
-//        else
-            ctx.next();
+        ctx.notFound();
     }
 }

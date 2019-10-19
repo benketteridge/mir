@@ -12,14 +12,16 @@ public class Router implements Handler {
     private ExtendedHandler spendHandler = new SpendHandler();
     private ExtendedHandler defaultHandler = new DefaultHandler();
 
-    private ExtendedHandler[] handlers = new ExtendedHandler[] {
+    private ExtendedHandler[] handlers = new ExtendedHandler[]{
             loginHandler, balanceHandler, transactionHandler, spendHandler, defaultHandler
     };
 
-    public void handle(Context context) {
+    public void handle(Context ctx) {
         for (ExtendedHandler h: handlers) {
-            if (h.supports(context)) {
-                context.insert(h);
+            if (h.supports(ctx)) {
+                h.preHandle(ctx); // check Authorization, if required
+                ctx.insert(h);
+                break;
             }
         }
     }
