@@ -1,16 +1,19 @@
 package com.ketteridge.mir.handlers;
 
-import com.ketteridge.mir.domain.Authorization;
 import lombok.extern.slf4j.Slf4j;
 import ratpack.handling.Context;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
+/**
+ * Handler for /transactions API.
+ * Retrieves the transactions list from the Redis store and returns it to the requester.
+ */
 @Slf4j
 public class TransactionHandler extends ExtendedHandler {
 
     @Override
     public boolean supports(Context ctx) {
+        // check that this is GET /transactions
         return ctx.getRequest().getMethod().isGet() && ctx.getRequest().getPath().equals("transactions");
     }
 
@@ -24,7 +27,13 @@ public class TransactionHandler extends ExtendedHandler {
             transactionListAsJson = jedis.get("transactions:" + getAuth(ctx));
         }
 
-        ctx.getResponse().status(200).send(transactionListAsJson);
+        if (transactionListAsJson == null) {
+            sendUnauthorized(ctx);
+        }
+        else {
+            // and tell the client
+            ctx.getResponse().contentType("application/json").status(200).send(transactionListAsJson);
+        }
     }
 
 }

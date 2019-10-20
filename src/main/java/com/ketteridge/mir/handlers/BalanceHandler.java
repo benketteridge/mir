@@ -1,21 +1,19 @@
 package com.ketteridge.mir.handlers;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.ketteridge.mir.domain.Authorization;
-import com.ketteridge.mir.domain.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import ratpack.handling.Context;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
-import java.math.BigDecimal;
-import java.util.List;
-
+/**
+ * Handler for /balance API.
+ * Retrieves the balance key from the Redis store and returns it to the requester.
+ */
 @Slf4j
 public class BalanceHandler extends ExtendedHandler {
 
     @Override
     public boolean supports(Context ctx) {
+        // check that this is GET /balance
         return ctx.getRequest().getMethod().isGet() && ctx.getRequest().getPath().equals("balance");
     }
 
@@ -31,7 +29,12 @@ public class BalanceHandler extends ExtendedHandler {
             // keeping the connection open for as short a period as possible
         }
 
-        ctx.getResponse().status(200).send(balance);
+        if (balance == null || balance.length() == 0) {
+            sendUnauthorized(ctx);
+        }
+        else {
+            ctx.getResponse().status(200).send(balance);
+        }
     }
 
 }
