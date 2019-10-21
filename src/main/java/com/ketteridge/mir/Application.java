@@ -15,7 +15,8 @@ public class Application {
     public static void main(String[] args) throws Exception {
         // create a pooled connection to the localhost installation of Redis.
         // (could be parameterised on the command line with a different host, and more parameters, if required)
-        JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
+        // ... ooh bad man, hard coding a specific IP & port!
+        JedisPool pool = new JedisPool(new JedisPoolConfig(), "10.161.202.91", 6379);
 
         // as this main method will finish after initialising the RatpackServer, but we want to be good Redis users
         // and release our resources at the end of the run, we'll add a shutdown hook.
