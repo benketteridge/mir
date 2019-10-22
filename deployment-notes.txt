@@ -1,0 +1,52 @@
+Following https://codelabs.developers.google.com/codelabs/cloud-springboot-kubernetes/index.html
+
+git clone https://github.com/benketteridge/mir.git
+
+cd mir
+
+mvn package
+
+gcloud services enable containerregistry.googleapis.com
+
+mvn -DskipTests com.google.cloud.tools:jib-maven-plugin:build -Dimage=gcr.io/$GOOGLE_CLOUD_PROJECT/mir:v1
+
+docker run -ti --rm -p 5050:5050 gcr.io/$GOOGLE_CLOUD_PROJECT/mir:v1
+
+gcloud services enable compute.googleapis.com container.googleapis.com
+
+gcloud container clusters create mir-v1-cluster --num-nodes 2 --machine-type n1-standard-1 --zone europe-west1-b --enable-ip-alias
+
+kubectl create deployment mir --image=gcr.io/$GOOGLE_CLOUD_PROJECT/mir:v1
+
+kubectl create service loadbalancer mir --tcp=5050:5050
+
+---
+
+gcloud docker -- pull marketplace.gcr.io/google/redis4
+
+cat > pod.yaml
+"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mir-redis
+  labels:
+    name: mir-redis
+spec:
+  containers:
+    - image: marketplace.gcr.io/google/redis4
+      name: redis
+"
+
+kubectl create -f pod.yaml
+
+kubectl expose pod mir-redis --name mir-redis-6379 --type LoadBalancer --port 6379 --protocol TCP
+
+----
+
+networking:
+
+gcloud compute networks subnets update default --region europe-west1 --enable-flow-logs
+
+manually enable "Intranode visibility" on cluster mir-v1-cluster
+
